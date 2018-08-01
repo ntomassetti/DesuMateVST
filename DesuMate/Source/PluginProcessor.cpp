@@ -30,6 +30,13 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 	//Params
 	addParameter(bitDepth = new AudioParameterFloat("bitDepth", "Bit Rate", 1.f, 32.f, 16.f));
 	addParameter(sampleRateReduction = new AudioParameterFloat("sampleRateReduction", "Samplerate Reduction", 0.001f, 1.00f, 1.00f));
+	//in Filter
+	addParameter(inFilterFreq = new AudioParameterFloat("inFilterFreq", "Input Filter Frequency", 20.00f, 22000.0f, 22000.0f));
+	addParameter(inFilterRes = new AudioParameterFloat("inFilterRes", "Input Filter Resonance", 0.1f, 4.0f, 0.707f));
+	//out filter
+	addParameter(outFilterFreq = new AudioParameterFloat("outFilterFreq", "Output Filter Frequency", 20.00f, 22000.0f, 22000.0f));
+	addParameter(outFilterRes = new AudioParameterFloat("outFilterRes", "Output Filter Resonance", 0.1f, 4.0f, 0.707f));
+
 }
 
 DesuMateAudioProcessor::~DesuMateAudioProcessor()
@@ -102,9 +109,18 @@ void DesuMateAudioProcessor::changeProgramName (int index, const String& newName
 //==============================================================================
 void DesuMateAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+	auto channels = static_cast<uint32> (jmin(getMainBusNumInputChannels(), getMainBusNumOutputChannels()));
+	dsp::ProcessSpec spec{ sampleRate, static_cast<uint32> (samplesPerBlock), channels };
 
+	inFilter.prepare(spec);
+	inFilter.reset();
+	inFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+	inFilter.state->setCutOffFrequency(sampleRate, *inFilterFreq, *inFilterRes);
+	
+	outFilter.prepare(spec);
+	outFilter.reset();
+	outFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+	outFilter.state->setCutOffFrequency(sampleRate, *outFilterFreq, *outFilterRes);
 }
 
 void DesuMateAudioProcessor::releaseResources()
@@ -147,19 +163,25 @@ void DesuMateAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
+	//Set the contex to save some time...
+	dsp::AudioBlock<float> block(buffer);
+	dsp::ProcessContextReplacing<float> context(block);
 
+	inFilter.process(context);
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
 		Decimation[channel].updateParameters(*bitDepth,*sampleRateReduction);
+		UpdateFilters();
 		auto* inputBuffer = buffer.getReadPointer(channel);
-		
 		auto* outputBuffer = buffer.getWritePointer (channel);
+
 		for (int i = 0; i < buffer.getNumSamples(); i++) {
 			outputBuffer[i] = Decimation[channel].process(inputBuffer[i]);
-		}
-        
+		}   
     }
+
+	outFilter.process(context);
 }
 
 //==============================================================================
@@ -178,12 +200,28 @@ void DesuMateAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
 	MemoryOutputStream(destData, true).writeFloat(*bitDepth);
 	MemoryOutputStream(destData, true).writeFloat(*sampleRateReduction);
+	//probably a better way of doing this?
+	MemoryOutputStream(destData, true).writeFloat(*inFilterFreq);
+	MemoryOutputStream(destData, true).writeFloat(*inFilterRes);
+	MemoryOutputStream(destData, true).writeFloat(*outFilterFreq);
+	MemoryOutputStream(destData, true).writeFloat(*outFilterRes);
 }
 
 void DesuMateAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
 	*bitDepth = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
 	*sampleRateReduction = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+
+	*inFilterFreq = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	*inFilterRes = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	*outFilterFreq = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	*outFilterRes = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+}
+
+void DesuMateAudioProcessor::UpdateFilters()
+{
+	inFilter.state->setCutOffFrequency(getSampleRate(), *inFilterFreq, *inFilterRes);
+	outFilter.state->setCutOffFrequency(getSampleRate(), *outFilterFreq, *outFilterRes);
 }
 
 //==============================================================================

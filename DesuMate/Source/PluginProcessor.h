@@ -55,15 +55,24 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-	
+	void UpdateFilters();
 private:
+	//////////////////////////
 	//Params
-	AudioParameterFloat * bitDepth;
+	//Input Filter
+	AudioParameterFloat* inFilterFreq;
+	AudioParameterFloat* inFilterRes;
+	//Output Filter
+	AudioParameterFloat* outFilterFreq;
+	AudioParameterFloat* outFilterRes;
+	//Decimator
+	AudioParameterFloat* bitDepth;
 	AudioParameterFloat* sampleRateReduction;
-	//
-
+	/////////////////////////
+	dsp::ProcessorDuplicator<dsp::StateVariableFilter::Filter<float>, dsp::StateVariableFilter::Parameters<float>> inFilter, outFilter;
 	//
 	Decimator* Decimation;
+	//
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DesuMateAudioProcessor)
