@@ -55,10 +55,13 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-	void UpdateFilters();
+	void UpdateParameters();
 private:
 	//////////////////////////
 	//Params
+	//Gain
+	AudioParameterFloat* inputGain;
+	AudioParameterFloat* outputGain;
 	//Input Filter
 	AudioParameterFloat* inFilterFreq;
 	AudioParameterFloat* inFilterRes;
@@ -70,6 +73,7 @@ private:
 	AudioParameterFloat* sampleRateReduction;
 	/////////////////////////
 	dsp::ProcessorDuplicator<dsp::StateVariableFilter::Filter<float>, dsp::StateVariableFilter::Parameters<float>> inFilter, outFilter;
+	dsp::Gain<float> inputVolGain, outputVolGain;
 	//
 	Decimator* Decimation;
 	//

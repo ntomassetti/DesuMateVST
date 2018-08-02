@@ -28,15 +28,20 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 	Decimation = new Decimator[getNumOutputChannels()];
 
 	//Params
-	addParameter(bitDepth = new AudioParameterFloat("bitDepth", "Bit Rate", 1.f, 32.f, 16.f));
-	addParameter(sampleRateReduction = new AudioParameterFloat("sampleRateReduction", "Samplerate Reduction", 0.001f, 1.00f, 1.00f));
+	//in Gain
+	addParameter(inputGain = new AudioParameterFloat("inputGain", "Input Gain", 0.0f, 2.0f, 1.0f));
 	//in Filter
 	addParameter(inFilterFreq = new AudioParameterFloat("inFilterFreq", "Input Filter Frequency", 20.00f, 22000.0f, 22000.0f));
 	addParameter(inFilterRes = new AudioParameterFloat("inFilterRes", "Input Filter Resonance", 0.1f, 4.0f, 0.707f));
+
+	addParameter(bitDepth = new AudioParameterFloat("bitDepth", "Bit Rate", 1.f, 32.f, 16.f));
+	addParameter(sampleRateReduction = new AudioParameterFloat("sampleRateReduction", "Samplerate Reduction", 0.001f, 1.00f, 1.00f));
+
 	//out filter
 	addParameter(outFilterFreq = new AudioParameterFloat("outFilterFreq", "Output Filter Frequency", 20.00f, 22000.0f, 22000.0f));
 	addParameter(outFilterRes = new AudioParameterFloat("outFilterRes", "Output Filter Resonance", 0.1f, 4.0f, 0.707f));
-
+	//out gain
+	addParameter(outputGain = new AudioParameterFloat("outputGain", "Output Gain", 0.0f, 2.0f, 1.0f));
 }
 
 DesuMateAudioProcessor::~DesuMateAudioProcessor()
@@ -121,6 +126,9 @@ void DesuMateAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 	outFilter.reset();
 	outFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
 	outFilter.state->setCutOffFrequency(sampleRate, *outFilterFreq, *outFilterRes);
+
+	inputVolGain.prepare(spec);
+	outputVolGain.prepare(spec);
 }
 
 void DesuMateAudioProcessor::releaseResources()
@@ -166,13 +174,13 @@ void DesuMateAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	//Set the contex to save some time...
 	dsp::AudioBlock<float> block(buffer);
 	dsp::ProcessContextReplacing<float> context(block);
-
+	inputVolGain.process(context);
 	inFilter.process(context);
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
 		Decimation[channel].updateParameters(*bitDepth,*sampleRateReduction);
-		UpdateFilters();
+		UpdateParameters();
 		auto* inputBuffer = buffer.getReadPointer(channel);
 		auto* outputBuffer = buffer.getWritePointer (channel);
 
@@ -182,6 +190,7 @@ void DesuMateAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     }
 
 	outFilter.process(context);
+	outputVolGain.process(context);
 }
 
 //==============================================================================
@@ -205,6 +214,9 @@ void DesuMateAudioProcessor::getStateInformation (MemoryBlock& destData)
 	MemoryOutputStream(destData, true).writeFloat(*inFilterRes);
 	MemoryOutputStream(destData, true).writeFloat(*outFilterFreq);
 	MemoryOutputStream(destData, true).writeFloat(*outFilterRes);
+	MemoryOutputStream(destData, true).writeFloat(*inputGain);
+	MemoryOutputStream(destData, true).writeFloat(*outputGain);
+
 }
 
 void DesuMateAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -216,12 +228,18 @@ void DesuMateAudioProcessor::setStateInformation (const void* data, int sizeInBy
 	*inFilterRes = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
 	*outFilterFreq = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
 	*outFilterRes = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+
+	*inputGain = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	*outputGain = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
 }
 
-void DesuMateAudioProcessor::UpdateFilters()
+void DesuMateAudioProcessor::UpdateParameters()
 {
 	inFilter.state->setCutOffFrequency(getSampleRate(), *inFilterFreq, *inFilterRes);
 	outFilter.state->setCutOffFrequency(getSampleRate(), *outFilterFreq, *outFilterRes);
+
+	inputVolGain.setGainLinear(*inputGain);
+	outputVolGain.setGainLinear(*outputGain);
 }
 
 //==============================================================================
