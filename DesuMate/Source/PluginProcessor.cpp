@@ -29,8 +29,9 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 
 	//Params
 	//in Gain
-	addParameter(inputGain = new AudioParameterFloat("inputGain", "Input Gain", 0.0f, 2.0f, 1.0f));
+	//addParameter(inputGain = new AudioParameterFloat("inputGain", "Input Gain", 0.0f, 2.0f, 1.0f));
 	//in Filter
+	addParameter(inFilterType = new AudioParameterFloat("inFilterType", "Input Filter Type", 0.0f, 2.0f, 2.0f));
 	addParameter(inFilterFreq = new AudioParameterFloat("inFilterFreq", "Input Filter Frequency", 20.00f, 22000.0f, 22000.0f));
 	addParameter(inFilterRes = new AudioParameterFloat("inFilterRes", "Input Filter Resonance", 0.1f, 4.0f, 0.707f));
 
@@ -38,6 +39,7 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 	addParameter(sampleRateReduction = new AudioParameterFloat("sampleRateReduction", "Samplerate Reduction", 0.001f, 1.00f, 1.00f));
 
 	//out filter
+	addParameter(outFilterType = new AudioParameterFloat("outFilterType", "Output Filter Type", 0.0f, 2.0f, 2.0f));
 	addParameter(outFilterFreq = new AudioParameterFloat("outFilterFreq", "Output Filter Frequency", 20.00f, 22000.0f, 22000.0f));
 	addParameter(outFilterRes = new AudioParameterFloat("outFilterRes", "Output Filter Resonance", 0.1f, 4.0f, 0.707f));
 	//out gain
@@ -119,15 +121,15 @@ void DesuMateAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 
 	inFilter.prepare(spec);
 	inFilter.reset();
-	inFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+	inFilter.state->type = SelectFilterType(*inFilterType);
 	inFilter.state->setCutOffFrequency(sampleRate, *inFilterFreq, *inFilterRes);
 	
 	outFilter.prepare(spec);
 	outFilter.reset();
-	outFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+	outFilter.state->type = SelectFilterType(*outFilterType);
 	outFilter.state->setCutOffFrequency(sampleRate, *outFilterFreq, *outFilterRes);
 
-	inputVolGain.prepare(spec);
+	//inputVolGain.prepare(spec);
 	outputVolGain.prepare(spec);
 }
 
@@ -174,7 +176,7 @@ void DesuMateAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	//Set the contex to save some time...
 	dsp::AudioBlock<float> block(buffer);
 	dsp::ProcessContextReplacing<float> context(block);
-	inputVolGain.process(context);
+	//inputVolGain.process(context);
 	inFilter.process(context);
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -214,8 +216,10 @@ void DesuMateAudioProcessor::getStateInformation (MemoryBlock& destData)
 	MemoryOutputStream(destData, true).writeFloat(*inFilterRes);
 	MemoryOutputStream(destData, true).writeFloat(*outFilterFreq);
 	MemoryOutputStream(destData, true).writeFloat(*outFilterRes);
-	MemoryOutputStream(destData, true).writeFloat(*inputGain);
+	//MemoryOutputStream(destData, true).writeFloat(*inputGain);
 	MemoryOutputStream(destData, true).writeFloat(*outputGain);
+	MemoryOutputStream(destData, true).writeFloat(*inFilterType);
+	MemoryOutputStream(destData, true).writeFloat(*outFilterType);
 
 }
 
@@ -229,17 +233,42 @@ void DesuMateAudioProcessor::setStateInformation (const void* data, int sizeInBy
 	*outFilterFreq = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
 	*outFilterRes = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
 
-	*inputGain = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	//*inputGain = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
 	*outputGain = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+
+	*inFilterType = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	*outFilterType = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
 }
 
 void DesuMateAudioProcessor::UpdateParameters()
 {
 	inFilter.state->setCutOffFrequency(getSampleRate(), *inFilterFreq, *inFilterRes);
+	inFilter.state->type = SelectFilterType(*inFilterType);
 	outFilter.state->setCutOffFrequency(getSampleRate(), *outFilterFreq, *outFilterRes);
-
-	inputVolGain.setGainLinear(*inputGain);
+	outFilter.state->type = SelectFilterType(*outFilterType);
+	//inputVolGain.setGainLinear(*inputGain);
 	outputVolGain.setGainLinear(*outputGain);
+
+
+}
+
+dsp::StateVariableFilter::Parameters<float>::Type DesuMateAudioProcessor::SelectFilterType(int inType)
+{
+	switch (inType)
+	{
+	case HighPass:
+		return dsp::StateVariableFilter::Parameters<float>::Type::highPass;
+		break;
+	case BandPass:
+		return dsp::StateVariableFilter::Parameters<float>::Type::bandPass;
+		break;
+	case LowPass:
+		return dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+		break;
+	default:
+		return dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+		break;
+	}
 }
 
 //==============================================================================

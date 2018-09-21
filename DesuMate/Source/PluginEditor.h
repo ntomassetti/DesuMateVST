@@ -42,7 +42,7 @@ private:
 	Label noParameterLabel{ "noparam", "No parameters available" };
 	OwnedArray<Slider> paramSliders;
 	OwnedArray<Label> paramLabels;
-
+	OwnedArray<Label> paramFilterTypeLabels;
 
 	AudioParameterFloat* getParameterForSlider(Slider* slider);
 

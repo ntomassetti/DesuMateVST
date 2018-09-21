@@ -15,6 +15,14 @@
 //==============================================================================
 /**
 */
+
+enum FilterTypes
+{
+	HighPass,
+	BandPass,
+	LowPass
+};
+
 class DesuMateAudioProcessor  : public AudioProcessor
 {
 public:
@@ -56,6 +64,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 	void UpdateParameters();
+
+	dsp::StateVariableFilter::Parameters<float>::Type SelectFilterType(int inType);
 private:
 	//////////////////////////
 	//Params
@@ -63,9 +73,11 @@ private:
 	AudioParameterFloat* inputGain;
 	AudioParameterFloat* outputGain;
 	//Input Filter
+	AudioParameterFloat* inFilterType;
 	AudioParameterFloat* inFilterFreq;
 	AudioParameterFloat* inFilterRes;
 	//Output Filter
+	AudioParameterFloat* outFilterType;
 	AudioParameterFloat* outFilterFreq;
 	AudioParameterFloat* outFilterRes;
 	//Decimator

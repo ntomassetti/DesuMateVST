@@ -24,12 +24,13 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 			Slider* aSlider;
 			
 			paramSliders.add(aSlider = new Slider(param->name));
-			if (param->name == "Bit Rate")
+			if (param->name == "Bit Rate" || param->name == "Input Filter Type" || param->name == "Output Filter Type")
 			{
 				aSlider->setRange(param->range.start, param->range.end, 1);
 			}
 			else {
 				aSlider->setRange(param->range.start, param->range.end);
+				aSlider->setSkewFactor(.25f);
 			}
 
 			aSlider->setSliderStyle(Slider::LinearHorizontal);
