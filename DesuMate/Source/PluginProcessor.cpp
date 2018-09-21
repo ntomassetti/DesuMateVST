@@ -25,7 +25,7 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 #endif
 {
 	//memory allocation
-	Decimation = new Decimator[getNumOutputChannels()];
+	Decimation = new Decimator[getMainBusNumOutputChannels()];
 
 	//Params
 	//in Gain

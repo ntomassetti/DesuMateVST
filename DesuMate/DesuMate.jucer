@@ -61,7 +61,7 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>
-    <WINDOWS/>
+    <WINDOWS buildEnabled="1"/>
   </LIVE_SETTINGS>
   <JUCEOPTIONS/>
 </JUCERPROJECT>
