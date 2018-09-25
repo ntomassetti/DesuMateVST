@@ -15,10 +15,11 @@
 DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-
+	int colorMult = 128;
 	auto& params = processor.getParameters();
 	for (auto pa : params)
 	{
+
 		if (auto* param = dynamic_cast<AudioParameterFloat*> (pa))
 		{
 			Slider* aSlider;
@@ -27,23 +28,52 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 			if (param->name == "Bit Rate" || param->name == "Input Filter Type" || param->name == "Output Filter Type")
 			{
 				aSlider->setRange(param->range.start, param->range.end, 1);
+				if (param->name == "Input Filter Type" || param->name == "Output Filter Type") {
+					aSlider->textFromValueFunction = [](double value) {
+						String filterType;
+						switch ((int)value)
+						{
+							case 0:
+								filterType = "Highpass Filter";
+								break;
+							case 1:
+								filterType = "Bandpass Filter";
+								break;
+							case 2:
+								filterType = "Lowpass Filter";
+							default:
+								filterType = "Lowpass Filter";
+								break;
+						}
+						return filterType;
+					};
+				}
 			}
 			else {
 				aSlider->setRange(param->range.start, param->range.end);
 				aSlider->setSkewFactor(.25f);
 			}
-
-			aSlider->setSliderStyle(Slider::LinearHorizontal);
+			aSlider->setSliderStyle(Slider::LinearBar);
+			
+			aSlider->setColour(Slider::ColourIds::trackColourId, Colour(0, colorMult, colorMult));
+			aSlider->setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::black);
+			//aSlider->setSliderStyle(Slider::LinearHorizontal);
+			//getLookAndFeel().setColour(Slider::backgroundColourId, Colours::red);
 			aSlider->setValue(*param);
 
 			aSlider->onValueChange = [this, aSlider] { changeSliderValue(aSlider); };
 			aSlider->onDragStart = [this, aSlider] { startDragChange(aSlider); };
 			aSlider->onDragEnd = [this, aSlider] { endDragChange(aSlider); };
+
 			addAndMakeVisible(aSlider);
 
 			Label* aLabel;
 			paramLabels.add(aLabel = new Label(param->name, param->name));
+			aLabel->setColour(Label::ColourIds::backgroundColourId, Colour(0, colorMult, colorMult));
+			aLabel->setBorderSize(BorderSize<int>(4));
+			aLabel->setColour(Label::ColourIds::outlineColourId, Colours::black);
 			addAndMakeVisible(aLabel);
+			colorMult -= 10;
 		}
 
 	}
@@ -111,6 +141,10 @@ void DesuMateAudioProcessorEditor::endDragChange(Slider * slider)
 {
 	if (auto* param = getParameterForSlider(slider))
 		param->endChangeGesture();
+}
+
+void DesuMateAudioProcessorEditor::filterSliderTypeValue(Slider * slider)
+{
 }
 
 AudioParameterFloat * DesuMateAudioProcessorEditor::getParameterForSlider(Slider * slider)
