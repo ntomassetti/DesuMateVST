@@ -79,7 +79,8 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 	}
 	noParameterLabel.setJustificationType(Justification::horizontallyCentred | Justification::verticallyCentred);
 	noParameterLabel.setFont(noParameterLabel.getFont().withStyle(Font::italic));
-
+	setResizable(true, true);
+	setResizeLimits(300, paramControlHeight * paramSliders.size(), 12000, paramControlHeight * paramSliders.size());
 	if (paramSliders.size() == 0)
 	{
 		addAndMakeVisible(noParameterLabel);
