@@ -15,7 +15,7 @@
 DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-	int colorMult = 128;
+	int colorMult = 196;
 	auto& params = processor.getParameters();
 	for (auto pa : params)
 	{
@@ -57,20 +57,17 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 			
 			aSlider->setColour(Slider::ColourIds::trackColourId, Colour(0, colorMult, colorMult));
 			aSlider->setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::black);
-			//aSlider->setSliderStyle(Slider::LinearHorizontal);
-			//getLookAndFeel().setColour(Slider::backgroundColourId, Colours::red);
 			aSlider->setValue(*param);
 
 			aSlider->onValueChange = [this, aSlider] { changeSliderValue(aSlider); };
 			aSlider->onDragStart = [this, aSlider] { startDragChange(aSlider); };
 			aSlider->onDragEnd = [this, aSlider] { endDragChange(aSlider); };
-
+			
 			addAndMakeVisible(aSlider);
 
 			Label* aLabel;
 			paramLabels.add(aLabel = new Label(param->name, param->name));
 			aLabel->setColour(Label::ColourIds::backgroundColourId, Colour(0, colorMult, colorMult));
-			aLabel->setBorderSize(BorderSize<int>(4));
 			aLabel->setColour(Label::ColourIds::outlineColourId, Colours::black);
 			addAndMakeVisible(aLabel);
 			colorMult -= 10;
@@ -79,8 +76,11 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 	}
 	noParameterLabel.setJustificationType(Justification::horizontallyCentred | Justification::verticallyCentred);
 	noParameterLabel.setFont(noParameterLabel.getFont().withStyle(Font::italic));
+	
+	//Resizeable
 	setResizable(true, true);
 	setResizeLimits(300, paramControlHeight * paramSliders.size(), 12000, paramControlHeight * paramSliders.size());
+	//
 	if (paramSliders.size() == 0)
 	{
 		addAndMakeVisible(noParameterLabel);
@@ -104,11 +104,7 @@ void DesuMateAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-/*
-    g.setColour (Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
-	*/
+
 }
 
 void DesuMateAudioProcessorEditor::resized()
@@ -144,9 +140,6 @@ void DesuMateAudioProcessorEditor::endDragChange(Slider * slider)
 		param->endChangeGesture();
 }
 
-void DesuMateAudioProcessorEditor::filterSliderTypeValue(Slider * slider)
-{
-}
 
 AudioParameterFloat * DesuMateAudioProcessorEditor::getParameterForSlider(Slider * slider)
 {
@@ -160,7 +153,7 @@ void DesuMateAudioProcessorEditor::timerCallback()
 
 	for (auto i = 0; i < params.size(); i++) {
 		if (auto* param = dynamic_cast<AudioParameterFloat*> (params[i])) {
-			if (i < paramSliders.size())
+			if (i < paramSliders.size()) 
 				paramSliders[i]->setValue(*param);
 		}
 	}

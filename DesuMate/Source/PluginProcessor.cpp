@@ -10,7 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-
+#include "DelayDSP.h"
 //==============================================================================
 DesuMateAudioProcessor::DesuMateAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -129,6 +129,7 @@ void DesuMateAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 	outFilter.state->type = SelectFilterType(*outFilterType);
 	outFilter.state->setCutOffFrequency(sampleRate, *outFilterFreq, *outFilterRes);
 
+
 	//inputVolGain.prepare(spec);
 	outputVolGain.prepare(spec);
 }
@@ -178,7 +179,6 @@ void DesuMateAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 	dsp::ProcessContextReplacing<float> context(block);
 	//inputVolGain.process(context);
 	inFilter.process(context);
-
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
 		Decimation[channel].updateParameters(*bitDepth,*sampleRateReduction);
@@ -192,6 +192,7 @@ void DesuMateAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     }
 
 	outFilter.process(context);
+
 	outputVolGain.process(context);
 }
 

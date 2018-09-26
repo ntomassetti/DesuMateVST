@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "decimator.h"
+#include "DelayDSP.h"
 //==============================================================================
 /**
 */
@@ -85,7 +86,7 @@ private:
 	AudioParameterFloat* sampleRateReduction;
 	/////////////////////////
 	dsp::ProcessorDuplicator<dsp::StateVariableFilter::Filter<float>, dsp::StateVariableFilter::Parameters<float>> inFilter, outFilter;
-	dsp::Gain<float> inputVolGain, outputVolGain;
+	dsp::Gain<float> outputVolGain;
 	//
 	Decimator* Decimation;
 	//

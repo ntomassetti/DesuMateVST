@@ -30,7 +30,6 @@ public:
 	void startDragChange(Slider* slider);
 	void endDragChange(Slider* slider);
 	
-	void filterSliderTypeValue(Slider* slider);
 	enum
 	{
 		paramControlHeight = 40,
