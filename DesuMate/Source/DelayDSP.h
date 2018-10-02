@@ -69,7 +69,7 @@ public:
 	Delay() {
 		setMaxDelayTime(2.0f);
 		setDelayTime(0, 0.7f);
-		setDelayTime(1, 0.5f);
+		setDelayTime(1, 0.7f);
 		setWetLevel(0.8f);
 		setFeedback(0.5f);
 	}
@@ -153,7 +153,7 @@ public:
 			auto& filter = filters[ch];
 
 			for (size_t i = 0; i < numSamples; ++i) {
-				auto delayedSample = filter.processSample(dline.get(delayTime));
+				auto delayedSample = dline.get(delayTime);
 				auto inputSample = input[i];
 				auto dlineInputSample = std::tanh(inputSample + feedback * delayedSample);
 				dline.push(dlineInputSample);
