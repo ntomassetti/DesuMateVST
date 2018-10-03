@@ -3,7 +3,9 @@
 <JUCERPROJECT id="rkSGbf" name="DesuMate" projectType="audioplug" jucerVersion="5.3.2"
               pluginFormats="buildAU,buildVST,buildVST3" pluginAAXCategory="8192"
               companyName="NST Sound" companyWebsite="www.nicktomassetti.com"
-              version="1.0.0">
+              version="1.0.0" pluginAUExportPrefix="DesuMateAU" pluginManufacturer="NST Sound"
+              pluginManufacturerCode="Nst1" pluginCode="Onee" pluginName="DesuMate"
+              pluginDesc="Decimator">
   <MAINGROUP id="ZTaTAU" name="DesuMate">
     <GROUP id="{57329D1B-6D0F-2A22-C697-EA8E2341166C}" name="Source">
       <FILE id="tNDwQI" name="DelayDSP.h" compile="0" resource="0" file="Source/DelayDSP.h"/>

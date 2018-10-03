@@ -10,7 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "DelayDSP.h"
+
 //==============================================================================
 DesuMateAudioProcessor::DesuMateAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
