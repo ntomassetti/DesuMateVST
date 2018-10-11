@@ -33,7 +33,7 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 	//in Filter
 	addParameter(inFilterType = new AudioParameterFloat("inFilterType", "Input Filter Type", 0.0f, 2.0f, 2.0f));
 	addParameter(inFilterFreq = new AudioParameterFloat("inFilterFreq", "Input Filter Frequency", 20.00f, 22000.0f, 22000.0f));
-	addParameter(inFilterRes = new AudioParameterFloat("inFilterRes", "Input Filter Resonance", 0.1f, 4.0f, 0.707f));
+	addParameter(inFilterRes = new AudioParameterFloat("inFilterRes", "Input Filter Resonance", 0.1f, 20.0f, 0.707f));
 
 	addParameter(bitDepth = new AudioParameterFloat("bitDepth", "Bit Rate", 1.f, 32.f, 16.f));
 	addParameter(sampleRateReduction = new AudioParameterFloat("sampleRateReduction", "Samplerate Reduction", 0.001f, 1.00f, 1.00f));
@@ -41,7 +41,7 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 	//out filter
 	addParameter(outFilterType = new AudioParameterFloat("outFilterType", "Output Filter Type", 0.0f, 2.0f, 2.0f));
 	addParameter(outFilterFreq = new AudioParameterFloat("outFilterFreq", "Output Filter Frequency", 20.00f, 22000.0f, 22000.0f));
-	addParameter(outFilterRes = new AudioParameterFloat("outFilterRes", "Output Filter Resonance", 0.1f, 4.0f, 0.707f));
+	addParameter(outFilterRes = new AudioParameterFloat("outFilterRes", "Output Filter Resonance", 0.1f, 20.0f, 0.707f));
 	//out gain
 	addParameter(outputGain = new AudioParameterFloat("outputGain", "Output Gain", 0.0f, 2.0f, 1.0f));
 }
