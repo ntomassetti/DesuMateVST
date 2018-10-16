@@ -84,7 +84,7 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 	if (paramSliders.size() == 0)
 	{
 		addAndMakeVisible(noParameterLabel);
-		setSize(300, 100);
+		setSize(processor.lastUIWidth, processor.lastUIHeight);
 	}
 	else
 	{
@@ -120,6 +120,8 @@ void DesuMateAudioProcessorEditor::resized()
 		paramLabels[i]->setBounds(labelBounds);
 		paramSliders[i]->setBounds(paramBounds);
 	}
+	processor.lastUIWidth = getWidth();
+	processor.lastUIHeight = getHeight();
 }
 
 void DesuMateAudioProcessorEditor::changeSliderValue(Slider * slider)

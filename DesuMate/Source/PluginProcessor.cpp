@@ -113,6 +113,86 @@ void DesuMateAudioProcessor::changeProgramName (int index, const String& newName
 {
 }
 
+void DesuMateAudioProcessor::setCurrentPresetName(String & newName)
+{
+	presetName = newName;
+}
+
+String DesuMateAudioProcessor::getCurrentPresetName()
+{
+	return presetName;
+}
+
+void DesuMateAudioProcessor::saveStateToXML(XmlElement & xmlState)
+{
+	// add some attributes to it…
+	xmlState.setAttribute("pluginVersion", 1);
+	xmlState.setAttribute("presetName", presetName);
+	for (auto* param : getParameters()) {
+		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
+			xmlState.setAttribute(p->paramID, p->getValue());
+		}
+	}
+}
+
+void DesuMateAudioProcessor::loadStateFromXML(XmlElement * xmlState)
+{
+	// check that it’s the right type of xml…
+	if (xmlState->hasTagName("DesuMate"))
+	{
+		presetName = xmlState->getStringAttribute("presetName");
+		// ok, now pull out our parameters…
+		for (auto* param : getParameters()) {
+			if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
+				setParameter(p->getParameterIndex(), p->getValue());
+			}
+		}
+
+		//for (int j = 0; j < kNumberOfParameters; j++)
+			//setParameter(j, (float)xmlState->getDoubleAttribute(getParameterName(j), getParameter(j)));
+
+		//sendChangeMessage();
+	}
+}
+
+void DesuMateAudioProcessor::getStateAsText(String & destStr)
+{
+	// create an outer XML element.
+	XmlElement xml("DesuMate");
+	saveStateToXML(xml);
+	destStr = xml.createDocument(String::empty, true, false);
+}
+
+void DesuMateAudioProcessor::setStateFromText(const String & stateStr)
+{
+	XmlDocument doc(stateStr);
+	XmlElement* xmlState = doc.getDocumentElement();
+	if (xmlState)
+	{
+		loadStateFromXML(xmlState);
+		delete xmlState;
+	}
+}
+
+bool DesuMateAudioProcessor::saveStateToFile(File newFile)
+{
+	// create an outer XML element…
+	XmlElement xmlState("DesuMate");
+	saveStateToXML(xmlState);
+	return (xmlState.writeToFile(newFile, "", "UTF - 8", 60));
+}
+
+void DesuMateAudioProcessor::setStateFromFile(File newFile)
+{
+	XmlElement* xmlState = XmlDocument::parse(newFile);
+
+	if (xmlState != 0 && xmlState->hasTagName("DesuMate"))
+	{
+		loadStateFromXML(xmlState);
+		delete xmlState;
+	}
+}
+
 //==============================================================================
 void DesuMateAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
@@ -210,35 +290,55 @@ AudioProcessorEditor* DesuMateAudioProcessor::createEditor()
 //==============================================================================
 void DesuMateAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-	MemoryOutputStream(destData, true).writeFloat(*bitDepth);
-	MemoryOutputStream(destData, true).writeFloat(*sampleRateReduction);
-	//probably a better way of doing this?
-	MemoryOutputStream(destData, true).writeFloat(*inFilterFreq);
-	MemoryOutputStream(destData, true).writeFloat(*inFilterRes);
-	MemoryOutputStream(destData, true).writeFloat(*outFilterFreq);
-	MemoryOutputStream(destData, true).writeFloat(*outFilterRes);
-	//MemoryOutputStream(destData, true).writeFloat(*inputGain);
-	MemoryOutputStream(destData, true).writeFloat(*outputGain);
-	MemoryOutputStream(destData, true).writeFloat(*inFilterType);
-	MemoryOutputStream(destData, true).writeFloat(*outFilterType);
+	// create an outer XML element…
+	XmlElement xmlState("DesuMate");
+	saveStateToXML(xmlState);
 
+	// then use this helper function to stuff it into the binary blob and return it..
+	copyXmlToBinary(xmlState, destData);
+	/*
+	XmlElement xml("MYPLUGINSETTINGS");
+
+	xml.setAttribute("uiWidth", lastUIWidth);
+	xml.setAttribute("uiWidth", lastUIHeight);
+
+	for (auto* param : getParameters()) {
+		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
+			xml.setAttribute(p->paramID, p->getValue());
+		}
+	}
+	
+	copyXmlToBinary(xml, destData);
+	*/
 }
 
 void DesuMateAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-	*bitDepth = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
-	*sampleRateReduction = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	// use this helper function to get the XML from this binary blob…
+	XmlElement* const xmlState = getXmlFromBinary(data, sizeInBytes);
 
-	*inFilterFreq = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
-	*inFilterRes = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
-	*outFilterFreq = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
-	*outFilterRes = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	if (xmlState != 0)
+	{
+		loadStateFromXML(xmlState);
+		delete xmlState;
+	}
 
-	//*inputGain = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
-	*outputGain = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	/*
+	std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
-	*inFilterType = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
-	*outFilterType = MemoryInputStream(data, static_cast<size_t> (sizeInBytes), false).readFloat();
+	if (xmlState.get() != nullptr)
+	{
+		if (xmlState->hasTagName("MYPLUGINSETTINGS"))
+		{
+			lastUIWidth = jmax(xmlState->getIntAttribute("uiWidth", lastUIWidth), 400);
+			lastUIHeight = jmax(xmlState->getIntAttribute("uiHeight", lastUIHeight), 200);
+
+			for (auto* param : getParameters())
+				if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param))
+					p->setValue((float)xmlState->getDoubleAttribute(p->paramID, p->getValue()));
+		}
+	}
+	*/
 }
 
 void DesuMateAudioProcessor::UpdateParameters()

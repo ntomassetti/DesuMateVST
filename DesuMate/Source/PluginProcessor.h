@@ -59,6 +59,14 @@ public:
     const String getProgramName (int index) override;
     void changeProgramName (int index, const String& newName) override;
 
+	void setCurrentPresetName(String& newName);
+	String getCurrentPresetName();
+	void saveStateToXML(XmlElement& xmlState);
+	void loadStateFromXML(XmlElement* xmlState);
+	void getStateAsText(String& destStr);
+	void setStateFromText(const String& stateStr);
+	bool saveStateToFile(File newFile);
+	void setStateFromFile(File newFile);
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
@@ -66,6 +74,13 @@ public:
 	void UpdateParameters();
 
 	dsp::StateVariableFilter::Parameters<float>::Type SelectFilterType(int inType);
+public:
+
+	int lastUIWidth = 300;
+	int lastUIHeight = 200;
+	//Currently Selected preset
+
+
 private:
 	//////////////////////////
 	//Params
@@ -89,7 +104,7 @@ private:
 	//
 	Decimator* Decimation;
 	//
-
+	String presetName;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DesuMateAudioProcessor)
 };
