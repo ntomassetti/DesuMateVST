@@ -27,14 +27,19 @@ PresetGUIComponent::PresetGUIComponent ()
 	presetName.setText("init" , NotificationType::dontSendNotification);
 	addAndMakeVisible(curPreset);
 	addAndMakeVisible(presetName);
+
+
 	buttonLoadPreset.setButtonText("Load Preset");
 	buttonSavePreset.setButtonText("Save Preset");
-	
+	buttonInit.setButtonText("init");
+
 	buttonSavePreset.addListener(this);
 	buttonLoadPreset.addListener(this);
+	buttonInit.addListener(this);
 
 	addAndMakeVisible(buttonLoadPreset);
 	addAndMakeVisible(buttonSavePreset);
+	addAndMakeVisible(buttonInit);
 }
 
 PresetGUIComponent::~PresetGUIComponent()
@@ -62,12 +67,14 @@ void PresetGUIComponent::paint (Graphics& g)
 
 void PresetGUIComponent::resized()
 {
+	//Hard coded bounds since we don't want text wrapping on labels
+	//Otherwise probably could be done in a cleaner fashion... (To do?)
 	setBounds(0, 0, getWidth(), 40);
 	curPreset.setBounds(10, 0, 150, 40);
 	presetName.setBounds(110, 0, 250, 40);
 	buttonLoadPreset.setBounds(320, 3, 100, 35);
 	buttonSavePreset.setBounds(430, 3, 100, 35);
-	
+	buttonInit.setBounds(540, 3, 50, 35);
 }
 
 void PresetGUIComponent::buttonClicked(Button * button)
@@ -102,6 +109,12 @@ void PresetGUIComponent::buttonClicked(Button * button)
 			processor->setStateFromFile(filetoLoad);
 			presetName.setText(processor->getCurrentPresetName(), dontSendNotification);
 		}
+	}
+	if (button == &buttonInit)
+	{
+		processor->InitParameters();
+		processor->setCurrentPresetName(String("init"));
+		presetName.setText("init", dontSendNotification);
 	}
 }
 

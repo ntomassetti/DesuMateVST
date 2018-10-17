@@ -358,6 +358,15 @@ void DesuMateAudioProcessor::UpdateParameters()
 
 }
 
+void DesuMateAudioProcessor::InitParameters()
+{
+	for (auto* param : getParameters()) {
+		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
+			setParameter(p->getParameterIndex(), p->getDefaultValue());
+		}
+	}
+}
+
 dsp::StateVariableFilter::Parameters<float>::Type DesuMateAudioProcessor::SelectFilterType(int inType)
 {
 	switch (inType)

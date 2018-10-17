@@ -73,11 +73,14 @@ public:
 
 	void UpdateParameters();
 
+	/*Resets paramters to their default values defined in the constructor*/
+	void InitParameters();
+
+
 	dsp::StateVariableFilter::Parameters<float>::Type SelectFilterType(int inType);
-public:
 
-	//Currently Selected preset
-
+	/*dB to gain*/
+	float dBToGain(float inDB) { return pow(10.0f, inDB / 20.0f); };
 
 private:
 	//////////////////////////
