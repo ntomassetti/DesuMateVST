@@ -35,7 +35,7 @@ public:
 	{
 		paramControlHeight = 40,
 		paramLabelWidth = 80,
-		paramSliderWidth = 600
+		paramSliderWidth = 700
 	};
 
 private:

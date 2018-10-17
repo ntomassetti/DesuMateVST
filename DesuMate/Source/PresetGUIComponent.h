@@ -46,6 +46,8 @@ private:
 	DesuMateAudioProcessor* processor;
 	Label curPreset;
 	Label presetName;
+	Label labelVer;
+	Image imageLogo;
 
 	TextButton buttonLoadPreset;
 	TextButton buttonSavePreset;

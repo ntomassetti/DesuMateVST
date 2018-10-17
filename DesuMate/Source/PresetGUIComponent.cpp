@@ -23,12 +23,20 @@
 //==============================================================================
 PresetGUIComponent::PresetGUIComponent ()
 {
-	curPreset.setText("Current Preset:", NotificationType::dontSendNotification);
-	presetName.setText("init" , NotificationType::dontSendNotification);
+
+
+	curPreset.setText("Current Preset:", dontSendNotification);
+	presetName.setText("init" , dontSendNotification);
+	labelVer.setText(ProjectInfo::versionString, dontSendNotification);
+	Font verFont = Font(7);
+	Colour verTextCol = Colour(0.f, 0.0f, 1.0f, 0.35f);
+	verTextCol.withAlpha(0.35f);
+	labelVer.setColour(labelVer.textColourId, verTextCol);
+	labelVer.setFont(verFont);
 	addAndMakeVisible(curPreset);
 	addAndMakeVisible(presetName);
-
-
+	addAndMakeVisible(labelVer);
+	
 	buttonLoadPreset.setButtonText("Load Preset");
 	buttonSavePreset.setButtonText("Save Preset");
 	buttonInit.setButtonText("init");
@@ -62,6 +70,11 @@ void PresetGUIComponent::paint (Graphics& g)
 	PathStrokeType psType(2.0f);
 	psType.setJointStyle(PathStrokeType::JointStyle::beveled);
 	g.strokePath(path, psType);
+
+	imageLogo = ImageCache::getFromMemory(BinaryData::DesuLogo_01_png, BinaryData::DesuLogo_01_pngSize);
+	g.setOpacity(0.35);
+	g.drawImage(imageLogo, getWidth() - 160, 3, imageLogo.getWidth(), imageLogo.getHeight(), 0, 0, imageLogo.getWidth(), imageLogo.getHeight());
+
 	
 }
 
@@ -75,6 +88,7 @@ void PresetGUIComponent::resized()
 	buttonLoadPreset.setBounds(320, 3, 100, 35);
 	buttonSavePreset.setBounds(430, 3, 100, 35);
 	buttonInit.setBounds(540, 3, 50, 35);
+	labelVer.setBounds(getWidth() - 50, 0, 30, 30);
 }
 
 void PresetGUIComponent::buttonClicked(Button * button)

@@ -152,11 +152,6 @@ void DesuMateAudioProcessor::loadStateFromXML(XmlElement * xmlState)
 				setParameter(p->getParameterIndex(), (float)xmlState->getDoubleAttribute(p->paramID, p->getValue()));
 			}
 		}
-
-		//for (int j = 0; j < kNumberOfParameters; j++)
-			//setParameter(j, (float)xmlState->getDoubleAttribute(getParameterName(j), getParameter(j)));
-
-		//sendChangeMessage();
 	}
 }
 

@@ -51,16 +51,21 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 					};
 				}
 			}
+			else if (param->name == "Samplerate Reduction")
+			{
+				aSlider->setRange(param->range.start, param->range.end, 0.00001f);
+				aSlider->setSkewFactor(0.5f);
+			}
 			else {
-				aSlider->setRange(param->range.start, param->range.end);
+				aSlider->setRange(param->range.start, param->range.end, 0.001f);
 				aSlider->setSkewFactor(.25f);
+
 			}
 			aSlider->setSliderStyle(Slider::LinearBar);
 			
 			aSlider->setColour(Slider::ColourIds::trackColourId, Colour(0, colorMult, colorMult));
 			aSlider->setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::black);
 			aSlider->setValue(*param);
-
 			aSlider->onValueChange = [this, aSlider] { changeSliderValue(aSlider); };
 			aSlider->onDragStart = [this, aSlider] { startDragChange(aSlider); };
 			aSlider->onDragEnd = [this, aSlider] { endDragChange(aSlider); };

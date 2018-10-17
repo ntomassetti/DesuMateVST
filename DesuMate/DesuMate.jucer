@@ -9,6 +9,9 @@
   <MAINGROUP id="ZTaTAU" name="DesuMate">
     <GROUP id="{57329D1B-6D0F-2A22-C697-EA8E2341166C}" name="Source">
       <GROUP id="{077E80B2-820E-C2D8-BCFB-89C550E3A5AF}" name="GUI">
+        <GROUP id="{0360F927-BD87-18B1-7559-20FEDB7F2DE6}" name="Graphics">
+          <FILE id="cxVnWK" name="DesuLogo_01.png" compile="0" resource="1" file="Source/Graphics/DesuLogo_01.png"/>
+        </GROUP>
         <FILE id="Kzc7z1" name="PresetGUIComponent.cpp" compile="1" resource="0"
               file="Source/PresetGUIComponent.cpp"/>
         <FILE id="e8vaJK" name="PresetGUIComponent.h" compile="0" resource="0"
