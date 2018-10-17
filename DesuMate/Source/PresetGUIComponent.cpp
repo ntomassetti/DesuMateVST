@@ -19,12 +19,14 @@
 
 
 #include "PresetGUIComponent.h"
-
+/***
+	GUI Component for the top bar menu
+***/
 //==============================================================================
 PresetGUIComponent::PresetGUIComponent ()
 {
 
-
+	//Labels
 	curPreset.setText("Current Preset:", dontSendNotification);
 	presetName.setText("init" , dontSendNotification);
 	labelVer.setText(ProjectInfo::versionString, dontSendNotification);
@@ -36,7 +38,7 @@ PresetGUIComponent::PresetGUIComponent ()
 	addAndMakeVisible(curPreset);
 	addAndMakeVisible(presetName);
 	addAndMakeVisible(labelVer);
-	
+	//Buttons
 	buttonLoadPreset.setButtonText("Load Preset");
 	buttonSavePreset.setButtonText("Save Preset");
 	buttonInit.setButtonText("init");
@@ -60,22 +62,20 @@ void PresetGUIComponent::paint (Graphics& g)
 {
 
     g.fillAll (Colour(55, 55, 55));
-
+	//Preset Border for label
 	Path path;
-	Rectangle<int> presetBorder(8, 5, 303, 33);
+	Rectangle<int> presetBorder(8, 4, 303, 34);
 	g.setColour(Colour(17, 17, 17));
 	path.addRoundedRectangle(presetBorder, 5.0f);
 	g.fillPath(path);
 	g.setColour(Colour(100, 100, 100));
 	PathStrokeType psType(2.0f);
-	psType.setJointStyle(PathStrokeType::JointStyle::beveled);
+	psType.setJointStyle(PathStrokeType::JointStyle::beveled);//Not sure if this is actually influencing anything
 	g.strokePath(path, psType);
-
+	//Logo Image from PNG file
 	imageLogo = ImageCache::getFromMemory(BinaryData::DesuLogo_01_png, BinaryData::DesuLogo_01_pngSize);
 	g.setOpacity(0.35);
 	g.drawImage(imageLogo, getWidth() - 160, 3, imageLogo.getWidth(), imageLogo.getHeight(), 0, 0, imageLogo.getWidth(), imageLogo.getHeight());
-
-	
 }
 
 void PresetGUIComponent::resized()
@@ -96,7 +96,7 @@ void PresetGUIComponent::buttonClicked(Button * button)
 	if (button == &buttonSavePreset) 
 	{
 		//Open an explorer window to find locaiton to save to.
-		FileChooser fileChooser("Location to save preset to...", File::getSpecialLocation(File::userHomeDirectory), "*.xml");
+		FileChooser fileChooser("Select a location to save preset to...", File::getSpecialLocation(File::commonDocumentsDirectory), "*.xml");
 		
 		if(fileChooser.browseForFileToSave(true)){
 			File filetoSave(fileChooser.getResult());
@@ -115,7 +115,7 @@ void PresetGUIComponent::buttonClicked(Button * button)
 	}
 	if (button == &buttonLoadPreset) 
 	{
-		FileChooser fileChooser("Preset to load...", File::getSpecialLocation(File::userHomeDirectory), "*.xml");
+		FileChooser fileChooser("Select a preset to load...", File::getSpecialLocation(File::commonDocumentsDirectory), "*.xml");
 
 		if (fileChooser.browseForFileToOpen())
 		{
