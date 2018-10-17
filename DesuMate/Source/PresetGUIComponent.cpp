@@ -96,14 +96,14 @@ void PresetGUIComponent::buttonClicked(Button * button)
 	if (button == &buttonSavePreset) 
 	{
 		//Open an explorer window to find locaiton to save to.
-		FileChooser fileChooser("Select a location to save preset to...", File::getSpecialLocation(File::commonDocumentsDirectory), "*.xml");
+		FileChooser fileChooser("Select a location to save preset to...", File::getSpecialLocation(File::commonDocumentsDirectory), "*.desu");
 		
 		if(fileChooser.browseForFileToSave(true)){
 			File filetoSave(fileChooser.getResult());
-			processor->setCurrentPresetName(filetoSave.getFileName().dropLastCharacters(4));
+			processor->setCurrentPresetName(filetoSave.getFileName().dropLastCharacters(5));
 			if (processor->saveStateToFile(filetoSave)) 
 			{
-				String newPresetName = filetoSave.getFileName().dropLastCharacters(4);
+				String newPresetName = filetoSave.getFileName().dropLastCharacters(5);
 				presetName.setText(newPresetName, dontSendNotification);
 				DBG("Saved file");
 				DBG(filetoSave.getFullPathName());
@@ -115,7 +115,9 @@ void PresetGUIComponent::buttonClicked(Button * button)
 	}
 	if (button == &buttonLoadPreset) 
 	{
-		FileChooser fileChooser("Select a preset to load...", File::getSpecialLocation(File::commonDocumentsDirectory), "*.xml");
+		//To do: Create config file that can save and change preset folder location.
+		//For now we default to the documents directory.
+		FileChooser fileChooser("Select a preset to load...", File::getSpecialLocation(File::commonDocumentsDirectory), "*.desu");
 
 		if (fileChooser.browseForFileToOpen())
 		{
