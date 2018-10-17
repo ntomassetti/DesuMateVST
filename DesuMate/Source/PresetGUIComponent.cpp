@@ -80,8 +80,10 @@ void PresetGUIComponent::buttonClicked(Button * button)
 		if(fileChooser.browseForFileToSave(true)){
 			File filetoSave(fileChooser.getResult());
 			processor->setCurrentPresetName(filetoSave.getFileName().dropLastCharacters(4));
-			if (processor->saveStateToFile(filetoSave)) {
-				presetName.setText(filetoSave.getFileName().dropLastCharacters(4), dontSendNotification);
+			if (processor->saveStateToFile(filetoSave)) 
+			{
+				String newPresetName = filetoSave.getFileName().dropLastCharacters(4);
+				presetName.setText(newPresetName, dontSendNotification);
 				DBG("Saved file");
 				DBG(filetoSave.getFullPathName());
 			}
