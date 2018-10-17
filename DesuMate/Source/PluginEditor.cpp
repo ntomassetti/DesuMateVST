@@ -15,6 +15,8 @@
 DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
+	presetComp.setProcessor(&processor);
+	addAndMakeVisible(presetComp);
 	int colorMult = 196;
 	auto& params = processor.getParameters();
 	for (auto pa : params)
@@ -84,7 +86,7 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 	if (paramSliders.size() == 0)
 	{
 		addAndMakeVisible(noParameterLabel);
-		setSize(processor.lastUIWidth, processor.lastUIHeight);
+		setSize(500, 500);
 	}
 	else
 	{
@@ -111,17 +113,17 @@ void DesuMateAudioProcessorEditor::resized()
 {
 	auto r = getLocalBounds();
 	noParameterLabel.setBounds(r);
-
+	presetComp.setBounds(0, 0, getWidth(), 40);
 	for (auto i = 0; i < paramSliders.size(); ++i)
 	{
 		auto paramBounds = r.removeFromTop(paramControlHeight);
 		auto labelBounds = paramBounds.removeFromLeft(paramLabelWidth);
 
-		paramLabels[i]->setBounds(labelBounds);
-		paramSliders[i]->setBounds(paramBounds);
+		paramLabels[i]->setBounds(labelBounds.getX(), labelBounds.getY() + 40, labelBounds.getWidth(), labelBounds.getHeight());
+		paramSliders[i]->setBounds(paramBounds.getX(), paramBounds.getY() + 40, paramBounds.getWidth(), paramBounds.getHeight());
 	}
-	processor.lastUIWidth = getWidth();
-	processor.lastUIHeight = getHeight();
+	//processor.lastUIWidth = getWidth();
+	//processor.lastUIHeight = getHeight();
 }
 
 void DesuMateAudioProcessorEditor::changeSliderValue(Slider * slider)

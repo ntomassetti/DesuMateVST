@@ -44,6 +44,8 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 	addParameter(outFilterRes = new AudioParameterFloat("outFilterRes", "Output Filter Resonance", 0.1f, 20.0f, 0.707f));
 	//out gain
 	addParameter(outputGain = new AudioParameterFloat("outputGain", "Output Gain", 0.0f, 2.0f, 1.0f));
+
+
 }
 
 DesuMateAudioProcessor::~DesuMateAudioProcessor()
@@ -131,6 +133,7 @@ void DesuMateAudioProcessor::saveStateToXML(XmlElement & xmlState)
 	for (auto* param : getParameters()) {
 		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
 			xmlState.setAttribute(p->paramID, p->getValue());
+			DBG(p->paramID);
 		}
 	}
 }
@@ -143,8 +146,10 @@ void DesuMateAudioProcessor::loadStateFromXML(XmlElement * xmlState)
 		presetName = xmlState->getStringAttribute("presetName");
 		// ok, now pull out our parameters…
 		for (auto* param : getParameters()) {
+
+			
 			if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
-				setParameter(p->getParameterIndex(), p->getValue());
+				setParameter(p->getParameterIndex(), (float)xmlState->getDoubleAttribute(p->paramID, p->getValue()));
 			}
 		}
 

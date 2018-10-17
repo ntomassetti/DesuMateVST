@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "PresetGUIComponent.h"
 
 //==============================================================================
 /**
@@ -34,10 +35,12 @@ public:
 	{
 		paramControlHeight = 40,
 		paramLabelWidth = 80,
-		paramSliderWidth = 300
+		paramSliderWidth = 600
 	};
 
 private:
+
+	PresetGUIComponent presetComp;
 
 	Label noParameterLabel{ "noparam", "No parameters available" };
 	OwnedArray<Slider> paramSliders;

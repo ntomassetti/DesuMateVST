@@ -76,8 +76,6 @@ public:
 	dsp::StateVariableFilter::Parameters<float>::Type SelectFilterType(int inType);
 public:
 
-	int lastUIWidth = 300;
-	int lastUIHeight = 200;
 	//Currently Selected preset
 
 
@@ -104,7 +102,7 @@ private:
 	//
 	Decimator* Decimation;
 	//
-	String presetName;
+	String presetName = "init";
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DesuMateAudioProcessor)
 };
