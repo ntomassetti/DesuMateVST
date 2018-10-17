@@ -81,7 +81,7 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 	
 	//Resizeable
 	setResizable(true, true);
-	setResizeLimits(300, paramControlHeight * paramSliders.size(), 12000, paramControlHeight * paramSliders.size());
+	setResizeLimits(300, paramControlHeight * paramSliders.size() + 40, 12000, paramControlHeight * paramSliders.size());
 	//
 	if (paramSliders.size() == 0)
 	{
@@ -91,7 +91,7 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 	else
 	{
 		setSize(paramSliderWidth + paramLabelWidth,
-			jmax(100, paramControlHeight * paramSliders.size()));
+			jmax(100, paramControlHeight * paramSliders.size() + 40));
 
 		startTimer(100);
 	}
