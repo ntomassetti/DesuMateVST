@@ -43,7 +43,7 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
 	addParameter(outFilterFreq = new AudioParameterFloat("outFilterFreq", "Output Filter Frequency", 20.00f, 22000.0f, 22000.0f));
 	addParameter(outFilterRes = new AudioParameterFloat("outFilterRes", "Output Filter Resonance", 0.1f, 20.0f, 0.707f));
 	//out gain
-	addParameter(outputGain = new AudioParameterFloat("outputGain", "Output Gain", 0.0f, 2.0f, 1.0f));
+	addParameter(outputGain = new AudioParameterFloat("outputGain", "Output Gain", -96.0f, 12.0f, 0.0f));
 
 
 }
@@ -130,8 +130,10 @@ void DesuMateAudioProcessor::saveStateToXML(XmlElement & xmlState)
 	// add some attributes to it…
 	xmlState.setAttribute("pluginVersion", 1);
 	xmlState.setAttribute("presetName", presetName);
-	for (auto* param : getParameters()) {
-		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
+	for (auto* param : getParameters()) 
+	{
+		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) 
+		{
 			xmlState.setAttribute(p->paramID, p->getValue());
 			DBG(p->paramID);
 		}
@@ -145,10 +147,10 @@ void DesuMateAudioProcessor::loadStateFromXML(XmlElement * xmlState)
 	{
 		presetName = xmlState->getStringAttribute("presetName");
 		// ok, now pull out our parameters…
-		for (auto* param : getParameters()) {
-
-			
-			if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
+		for (auto* param : getParameters()) 
+		{
+			if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) 
+			{
 				setParameter(p->getParameterIndex(), (float)xmlState->getDoubleAttribute(p->paramID, p->getValue()));
 			}
 		}
@@ -266,7 +268,8 @@ void DesuMateAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
 		auto* inputBuffer = buffer.getReadPointer(channel);
 		auto* outputBuffer = buffer.getWritePointer (channel);
 
-		for (int i = 0; i < buffer.getNumSamples(); i++) {
+		for (int i = 0; i < buffer.getNumSamples(); i++) 
+		{
 			outputBuffer[i] = Decimation[channel].process(inputBuffer[i]);
 		}   
     }
@@ -348,15 +351,15 @@ void DesuMateAudioProcessor::UpdateParameters()
 	outFilter.state->setCutOffFrequency(getSampleRate(), *outFilterFreq, *outFilterRes);
 	outFilter.state->type = SelectFilterType(*outFilterType);
 	//inputVolGain.setGainLinear(*inputGain);
-	outputVolGain.setGainLinear(*outputGain);
-
-
+	outputVolGain.setGainLinear(dBToGain(*outputGain));
 }
 
 void DesuMateAudioProcessor::InitParameters()
 {
-	for (auto* param : getParameters()) {
-		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) {
+	for (auto* param : getParameters())
+	{
+		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) 
+		{
 			setParameter(p->getParameterIndex(), p->getDefaultValue());
 		}
 	}

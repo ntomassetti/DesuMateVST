@@ -82,6 +82,13 @@ public:
 	/*dB to gain*/
 	float dBToGain(float inDB) { return pow(10.0f, inDB / 20.0f); };
 
+public:
+	/*Store the last file location opened for presets since it 
+	does not call the constructor upon opening and closing GUI.
+	Temp solution until some sort of config file can maintain
+	this information...*/
+	File lastFileLocation = File::getSpecialLocation(File::commonDocumentsDirectory);
+
 private:
 	//////////////////////////
 	//Params

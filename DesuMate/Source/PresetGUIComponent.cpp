@@ -25,7 +25,6 @@
 //==============================================================================
 PresetGUIComponent::PresetGUIComponent ()
 {
-
 	//Labels
 	curPreset.setText("Current Preset:", dontSendNotification);
 	presetName.setText("init" , dontSendNotification);
@@ -40,8 +39,11 @@ PresetGUIComponent::PresetGUIComponent ()
 	addAndMakeVisible(labelVer);
 	//Buttons
 	buttonLoadPreset.setButtonText("Load Preset");
+	buttonLoadPreset.setColour(buttonLoadPreset.buttonColourId, Colour(25, 25, 25));
 	buttonSavePreset.setButtonText("Save Preset");
+	buttonSavePreset.setColour(buttonLoadPreset.buttonColourId, Colour(25, 25, 25));
 	buttonInit.setButtonText("init");
+	buttonInit.setColour(buttonLoadPreset.buttonColourId, Colour(25, 25, 25));
 
 	buttonSavePreset.addListener(this);
 	buttonLoadPreset.addListener(this);
@@ -96,9 +98,9 @@ void PresetGUIComponent::buttonClicked(Button * button)
 	if (button == &buttonSavePreset) 
 	{
 		//Open an explorer window to find locaiton to save to.
-		FileChooser fileChooser("Select a location to save preset to...", File::getSpecialLocation(File::commonDocumentsDirectory), "*.desu");
-		
-		if(fileChooser.browseForFileToSave(true)){
+		FileChooser fileChooser("Select a preset to load...", processor->lastFileLocation, "*.desu");
+		if(fileChooser.browseForFileToSave(true))
+		{
 			File filetoSave(fileChooser.getResult());
 			processor->setCurrentPresetName(filetoSave.getFileName().dropLastCharacters(5));
 			if (processor->saveStateToFile(filetoSave)) 
@@ -108,22 +110,27 @@ void PresetGUIComponent::buttonClicked(Button * button)
 				DBG("Saved file");
 				DBG(filetoSave.getFullPathName());
 			}
-			else {
+			else 
+			{
 				DBG("Failed to write file");
 			}
+
+			processor->lastFileLocation = fileChooser.getResult().getParentDirectory();
 		}
 	}
 	if (button == &buttonLoadPreset) 
 	{
 		//To do: Create config file that can save and change preset folder location.
 		//For now we default to the documents directory.
-		FileChooser fileChooser("Select a preset to load...", File::getSpecialLocation(File::commonDocumentsDirectory), "*.desu");
+		FileChooser fileChooser("Select a preset to load...", processor->lastFileLocation, "*.desu");
+
 
 		if (fileChooser.browseForFileToOpen())
 		{
 			File filetoLoad(fileChooser.getResult());
 			processor->setStateFromFile(filetoLoad);
 			presetName.setText(processor->getCurrentPresetName(), dontSendNotification);
+			processor->lastFileLocation = fileChooser.getResult().getParentDirectory();
 		}
 	}
 	if (button == &buttonInit)

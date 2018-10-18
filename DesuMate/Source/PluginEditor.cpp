@@ -30,8 +30,10 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 			if (param->name == "Bit Rate" || param->name == "Input Filter Type" || param->name == "Output Filter Type")
 			{
 				aSlider->setRange(param->range.start, param->range.end, 1);
-				if (param->name == "Input Filter Type" || param->name == "Output Filter Type") {
-					aSlider->textFromValueFunction = [](double value) {
+				if (param->name == "Input Filter Type" || param->name == "Output Filter Type") 
+				{
+					aSlider->textFromValueFunction = [](double value)
+					{
 						String filterType;
 						switch ((int)value)
 						{
@@ -51,12 +53,18 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 					};
 				}
 			}
+			else if (param->name == "Output Gain")
+			{
+				aSlider->setRange(param->range.start, param->range.end, 0.01f);
+				aSlider->setSkewFactor(1.5f);
+			}
 			else if (param->name == "Samplerate Reduction")
 			{
 				aSlider->setRange(param->range.start, param->range.end, 0.00001f);
 				aSlider->setSkewFactor(0.5f);
 			}
-			else {
+			else
+			{
 				aSlider->setRange(param->range.start, param->range.end, 0.001f);
 				aSlider->setSkewFactor(.25f);
 
@@ -161,7 +169,8 @@ void DesuMateAudioProcessorEditor::timerCallback()
 	auto& params = getAudioProcessor()->getParameters();
 
 	for (auto i = 0; i < params.size(); i++) {
-		if (auto* param = dynamic_cast<AudioParameterFloat*> (params[i])) {
+		if (auto* param = dynamic_cast<AudioParameterFloat*> (params[i]))
+		{
 			if (i < paramSliders.size()) 
 				paramSliders[i]->setValue(*param);
 		}
