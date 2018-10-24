@@ -24,6 +24,8 @@ DesuMateAudioProcessor::DesuMateAudioProcessor()
                        )
 #endif
 {
+
+
 	//memory allocation
 	Decimation = new Decimator[getMainBusNumOutputChannels()];
 
@@ -115,7 +117,7 @@ void DesuMateAudioProcessor::changeProgramName (int index, const String& newName
 {
 }
 
-void DesuMateAudioProcessor::setCurrentPresetName(String & newName)
+void DesuMateAudioProcessor::setCurrentPresetName(String newName)
 {
 	presetName = newName;
 }
@@ -157,7 +159,7 @@ void DesuMateAudioProcessor::loadStateFromXML(XmlElement * xmlState)
 	}
 }
 
-void DesuMateAudioProcessor::getStateAsText(String & destStr)
+void DesuMateAudioProcessor::getStateAsText(String destStr)
 {
 	// create an outer XML element.
 	XmlElement xml("DesuMate");
@@ -361,6 +363,19 @@ void DesuMateAudioProcessor::InitParameters()
 		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param)) 
 		{
 			setParameter(p->getParameterIndex(), p->getDefaultValue());
+		}
+	}
+}
+
+void DesuMateAudioProcessor::RandomizeParameters()
+{
+	for (auto* param : getParameters())
+	{
+		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param))
+		{
+			auto randomfloat = Random::getSystemRandom().nextFloat();
+
+			setParameter(p->getParameterIndex(), randomfloat);
 		}
 	}
 }

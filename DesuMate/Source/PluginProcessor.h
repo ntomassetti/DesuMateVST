@@ -59,11 +59,11 @@ public:
     const String getProgramName (int index) override;
     void changeProgramName (int index, const String& newName) override;
 
-	void setCurrentPresetName(String& newName);
+	void setCurrentPresetName(String newName);
 	String getCurrentPresetName();
 	void saveStateToXML(XmlElement& xmlState);
 	void loadStateFromXML(XmlElement* xmlState);
-	void getStateAsText(String& destStr);
+	void getStateAsText(String destStr);
 	void setStateFromText(const String& stateStr);
 	bool saveStateToFile(File newFile);
 	void setStateFromFile(File newFile);
@@ -75,7 +75,7 @@ public:
 
 	/*Resets paramters to their default values defined in the constructor*/
 	void InitParameters();
-
+	void RandomizeParameters();
 
 	dsp::StateVariableFilter::Parameters<float>::Type SelectFilterType(int inType);
 
@@ -90,6 +90,8 @@ public:
 	File lastFileLocation = File::getSpecialLocation(File::commonDocumentsDirectory);
 
 private:
+
+
 	//////////////////////////
 	//Params
 	//Gain

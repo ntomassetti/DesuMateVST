@@ -17,7 +17,7 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 {
 	presetComp.setProcessor(&processor);
 	addAndMakeVisible(presetComp);
-	int colorMult = 196;
+	int colorMult = 100;
 	auto& params = processor.getParameters();
 	for (auto pa : params)
 	{
@@ -55,23 +55,26 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 			}
 			else if (param->name == "Output Gain")
 			{
-				aSlider->setRange(param->range.start, param->range.end, 0.01f);
+				aSlider->setRange(param->range.start, param->range.end);
+				aSlider->setNumDecimalPlacesToDisplay(2);
 				aSlider->setSkewFactor(1.5f);
 			}
 			else if (param->name == "Samplerate Reduction")
 			{
-				aSlider->setRange(param->range.start, param->range.end, 0.00001f);
+				aSlider->setRange(param->range.start, param->range.end);
+				aSlider->setNumDecimalPlacesToDisplay(3);
 				aSlider->setSkewFactor(0.5f);
 			}
 			else
 			{
-				aSlider->setRange(param->range.start, param->range.end, 0.001f);
+				aSlider->setRange(param->range.start, param->range.end);
+				aSlider->setNumDecimalPlacesToDisplay(3);
 				aSlider->setSkewFactor(.25f);
 
 			}
 			aSlider->setSliderStyle(Slider::LinearBar);
 			
-			aSlider->setColour(Slider::ColourIds::trackColourId, Colour(0, colorMult, colorMult));
+			aSlider->setColour(Slider::ColourIds::trackColourId, Colour(0, colorMult, 218));
 			aSlider->setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::black);
 			aSlider->setValue(*param);
 			aSlider->onValueChange = [this, aSlider] { changeSliderValue(aSlider); };
@@ -82,10 +85,10 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 
 			Label* aLabel;
 			paramLabels.add(aLabel = new Label(param->name, param->name));
-			aLabel->setColour(Label::ColourIds::backgroundColourId, Colour(0, colorMult, colorMult));
+			aLabel->setColour(Label::ColourIds::backgroundColourId, Colour(0, colorMult, 218));
 			aLabel->setColour(Label::ColourIds::outlineColourId, Colours::black);
 			addAndMakeVisible(aLabel);
-			colorMult -= 10;
+			colorMult += 10;
 		}
 
 	}
@@ -99,7 +102,7 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 	if (paramSliders.size() == 0)
 	{
 		addAndMakeVisible(noParameterLabel);
-		setSize(500, 500);
+		setSize(250, 250);
 	}
 	else
 	{
@@ -118,8 +121,15 @@ DesuMateAudioProcessorEditor::~DesuMateAudioProcessorEditor()
 void DesuMateAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+	Image BGImage;
+	BGImage = ImageCache::getFromMemory(BinaryData::HA_BG_Logo_01_png, BinaryData::HA_BG_Logo_01_pngSize);
+    g.fillAll (Colour(35, 35, 35));
+	if (HABuild)
+	{
+		g.setOpacity(0.15f);
+		g.drawImage(BGImage, getWidth()*0.4, getHeight()* 0.28, BGImage.getWidth()*0.7f, BGImage.getHeight()*0.7f, 0, 0, BGImage.getWidth(), BGImage.getHeight());
 
+	}
 }
 
 void DesuMateAudioProcessorEditor::resized()

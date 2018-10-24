@@ -44,14 +44,18 @@ PresetGUIComponent::PresetGUIComponent ()
 	buttonSavePreset.setColour(buttonLoadPreset.buttonColourId, Colour(25, 25, 25));
 	buttonInit.setButtonText("init");
 	buttonInit.setColour(buttonLoadPreset.buttonColourId, Colour(25, 25, 25));
+	buttonRand.setButtonText("rand");
+	buttonRand.setColour(buttonLoadPreset.buttonColourId, Colour(25, 25, 25));
 
 	buttonSavePreset.addListener(this);
 	buttonLoadPreset.addListener(this);
 	buttonInit.addListener(this);
+	buttonRand.addListener(this);
 
 	addAndMakeVisible(buttonLoadPreset);
 	addAndMakeVisible(buttonSavePreset);
 	addAndMakeVisible(buttonInit);
+	addAndMakeVisible(buttonRand);
 }
 
 PresetGUIComponent::~PresetGUIComponent()
@@ -90,6 +94,7 @@ void PresetGUIComponent::resized()
 	buttonLoadPreset.setBounds(320, 3, 100, 35);
 	buttonSavePreset.setBounds(430, 3, 100, 35);
 	buttonInit.setBounds(540, 3, 50, 35);
+	buttonRand.setBounds(600, 3, 50, 35);
 	labelVer.setBounds(getWidth() - 50, 0, 30, 30);
 }
 
@@ -138,6 +143,10 @@ void PresetGUIComponent::buttonClicked(Button * button)
 		processor->InitParameters();
 		processor->setCurrentPresetName(String("init"));
 		presetName.setText("init", dontSendNotification);
+	}
+	if (button == &buttonRand)
+	{
+		processor->RandomizeParameters();
 	}
 }
 

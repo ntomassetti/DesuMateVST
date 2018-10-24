@@ -13,7 +13,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 #include "PresetGUIComponent.h"
-
 //==============================================================================
 /**
 */
@@ -35,7 +34,7 @@ public:
 	{
 		paramControlHeight = 40,
 		paramLabelWidth = 80,
-		paramSliderWidth = 700
+		paramSliderWidth = 770
 	};
 
 private:
@@ -48,6 +47,8 @@ private:
 	OwnedArray<Label> paramFilterTypeLabels;
 
 	AudioParameterFloat* getParameterForSlider(Slider* slider);
+
+	bool HABuild = true;
 
 	void timerCallback() override;
     // This reference is provided as a quick way for your editor to
