@@ -320,12 +320,12 @@ void DesuMateAudioProcessor::getStateInformation (MemoryBlock& destData)
 void DesuMateAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
 	// use this helper function to get the XML from this binary blob…
-	XmlElement* const xmlState = getXmlFromBinary(data, sizeInBytes);
+	std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
-	if (xmlState != 0)
+	if (xmlState != nullptr)
 	{
-		loadStateFromXML(xmlState);
-		delete xmlState;
+		loadStateFromXML(xmlState.get());
+
 	}
 
 	/*
@@ -373,9 +373,12 @@ void DesuMateAudioProcessor::RandomizeParameters()
 	{
 		if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (param))
 		{
-			auto randomfloat = Random::getSystemRandom().nextFloat();
-
-			setParameter(p->getParameterIndex(), randomfloat);
+			//Because Kellen asked for it.
+			if (p->name != "Output Gain")
+			{
+				auto randomfloat = Random::getSystemRandom().nextFloat();
+				setParameter(p->getParameterIndex(), randomfloat);
+			}
 		}
 	}
 }

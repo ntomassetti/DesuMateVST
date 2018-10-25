@@ -72,8 +72,12 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 				aSlider->setSkewFactor(.25f);
 
 			}
+			if (auto* p = dynamic_cast<AudioProcessorParameterWithID*> (pa))
+			{
+				aSlider->setDoubleClickReturnValue(true, param->range.convertFrom0to1(p->getDefaultValue()));
+			}
 			aSlider->setSliderStyle(Slider::LinearBar);
-			
+
 			aSlider->setColour(Slider::ColourIds::trackColourId, Colour(0, colorMult, 218));
 			aSlider->setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::black);
 			aSlider->setValue(*param);
@@ -97,7 +101,7 @@ DesuMateAudioProcessorEditor::DesuMateAudioProcessorEditor (DesuMateAudioProcess
 	
 	//Resizeable
 	setResizable(true, true);
-	setResizeLimits(300, paramControlHeight * paramSliders.size() + 40, 12000, paramControlHeight * paramSliders.size());
+	setResizeLimits(300, paramControlHeight * paramSliders.size() + 40, 12000, paramControlHeight * paramSliders.size()+40);
 	//
 	if (paramSliders.size() == 0)
 	{
@@ -161,7 +165,7 @@ void DesuMateAudioProcessorEditor::startDragChange(Slider * slider)
 		param->beginChangeGesture();
 }
 
-void DesuMateAudioProcessorEditor::endDragChange(Slider * slider)
+void DesuMateAudioProcessorEditor::endDragChange(Slider* slider)
 {
 	if (auto* param = getParameterForSlider(slider))
 		param->endChangeGesture();
