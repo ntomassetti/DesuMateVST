@@ -3,15 +3,13 @@
 <JUCERPROJECT id="rkSGbf" name="DesuMate" projectType="audioplug" jucerVersion="5.3.2"
               pluginFormats="buildAAX,buildAU,buildVST,buildVST3" pluginAAXCategory="64,8192"
               companyName="Hexany Audio" companyWebsite="www.hexanyaudio.com"
-              version="1.0.0.1b" pluginAUExportPrefix="DesuMateAU" pluginManufacturer="Hexany Audio"
+              version="1.0.1" pluginAUExportPrefix="DesuMateAU" pluginManufacturer="Hexany Audio"
               pluginManufacturerCode="Nst1" pluginCode="Onee" pluginName="DesuMate"
               pluginDesc="DesuMate The Decimator" reportAppUsage="0" aaxIdentifier="com.HexanyAudio.DesuMate"
               bundleIdentifier="com.HexanyAudio.DesuMate">
   <MAINGROUP id="ZTaTAU" name="DesuMate">
     <GROUP id="{57329D1B-6D0F-2A22-C697-EA8E2341166C}" name="Source">
       <GROUP id="{077E80B2-820E-C2D8-BCFB-89C550E3A5AF}" name="GUI">
-        <FILE id="dQfmFm" name="DesuSlider.cpp" compile="1" resource="0" file="Source/DesuSlider.cpp"/>
-        <FILE id="vu5wkm" name="DesuSlider.h" compile="0" resource="0" file="Source/DesuSlider.h"/>
         <FILE id="iFA4Y2" name="HA_BG_Logo_01.png" compile="0" resource="1"
               file="Source/Graphics/HA_BG_Logo_01.png"/>
         <FILE id="m7nUic" name="DesuLogo_01.png" compile="0" resource="1" file="Source/Graphics/DesuLogo_01.png"/>
